@@ -67,4 +67,4 @@ Once running, the indexer exposes the following endpoints:
 
 ## 📄 License
 
-Private / Internal.
+This project is licensed under the MIT License
