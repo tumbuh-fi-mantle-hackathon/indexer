@@ -25,6 +25,418 @@ function createId(txHash: string, logIndex: number, suffix?: string): string {
   return suffix ? `${txHash}-${logIndex}-${suffix}` : `${txHash}-${logIndex}`;
 }
 
+const insertInitialAPY = async (
+  context: any,
+  protocolName: string,
+  protocolAddress: string,
+  token: string,
+  apyBps: number,
+  blockNumber: bigint,
+  timestamp: bigint
+) => {
+  const id = `${protocolName.toLowerCase()}_${token.toLowerCase()}`;
+  await context.db
+    .insert(protocolAPY)
+    .values({
+      id,
+      protocolName,
+      protocolAddress: protocolAddress.toLowerCase(),
+      token,
+      apyBps,
+      lastUpdatedBlock: blockNumber,
+      lastUpdatedTimestamp: timestamp,
+    })
+    .onConflictDoNothing();
+};
+
+ponder.on("BeefyCmETH:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0x89159c2a782ba2cae40ec25c39a1f38397f1eed5",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "Beefy",
+    "0x89159c2a782ba2cae40ec25c39a1f38397f1eed5",
+    "cmETH",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+ponder.on("BeefyMETH:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0x54ddde71d46409b919b8b29ad52133067b8441fb",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "Beefy",
+    "0x54ddde71d46409b919b8b29ad52133067b8441fb",
+    "mETH",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+ponder.on("BeefyUSDT:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0x5044c96dd29630fac0aa7a4ed8c03c0d0e28aa99",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "Beefy",
+    "0x5044c96dd29630fac0aa7a4ed8c03c0d0e28aa99",
+    "USDT",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+ponder.on("BeefyUSDC:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0xfa699fdc577f6b9538f6b979a327aed38ff27f57",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "Beefy",
+    "0xfa699fdc577f6b9538f6b979a327aed38ff27f57",
+    "USDC",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+
+ponder.on("CompoundCmETH:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0x91f048130c88c1f759a9bdc19883559d3dc275a6",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "Compound",
+    "0x91f048130c88c1f759a9bdc19883559d3dc275a6",
+    "cmETH",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+ponder.on("CompoundMETH:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0xd95d2f7c38bfa2f9d7a618474bc619470f01001f",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "Compound",
+    "0xd95d2f7c38bfa2f9d7a618474bc619470f01001f",
+    "mETH",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+ponder.on("CompoundUSDT:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0x763a03a3328e475f75ee2dd0329b27f02eed2443",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "Compound",
+    "0x763a03a3328e475f75ee2dd0329b27f02eed2443",
+    "USDT",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+ponder.on("CompoundUSDC:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0x4399b055b86c65bc2e91333d9118f98b974f052c",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "Compound",
+    "0x4399b055b86c65bc2e91333d9118f98b974f052c",
+    "USDC",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+
+ponder.on("DolomiteCmETH:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0xf8c1cfd46a543efb13305b041fc573550207fa79",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "Dolomite",
+    "0xf8c1cfd46a543efb13305b041fc573550207fa79",
+    "cmETH",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+ponder.on("DolomiteMETH:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0xc3a0701cebea2b97c460fd147f2eb41d7a286417",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "Dolomite",
+    "0xc3a0701cebea2b97c460fd147f2eb41d7a286417",
+    "mETH",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+ponder.on("DolomiteUSDT:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0x33efb6eb5bc283917cd212655685f7efbaab8d52",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "Dolomite",
+    "0x33efb6eb5bc283917cd212655685f7efbaab8d52",
+    "USDT",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+ponder.on("DolomiteUSDC:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0x9d583462ed3aada10ec86ac909d4db27f79866a7",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "Dolomite",
+    "0x9d583462ed3aada10ec86ac909d4db27f79866a7",
+    "USDC",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+
+ponder.on("InitCapitalCmETH:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0x9a53dbaaccbbff2721168673ac7738422bd4d1e9",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "InitCapital",
+    "0x9a53dbaaccbbff2721168673ac7738422bd4d1e9",
+    "cmETH",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+ponder.on("InitCapitalMETH:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0x40199df02e052be29bbf289fbb7717cd0be8ee80",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "InitCapital",
+    "0x40199df02e052be29bbf289fbb7717cd0be8ee80",
+    "mETH",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+ponder.on("InitCapitalUSDT:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0xe7ba244c2597ada3e6181577b9758c90f5802f13",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "InitCapital",
+    "0xe7ba244c2597ada3e6181577b9758c90f5802f13",
+    "USDT",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+ponder.on("InitCapitalUSDC:setup", async ({ context }) => {
+  const apyBps = await context.client.readContract({
+    abi: [
+      {
+        type: "function",
+        name: "apyBps",
+        inputs: [],
+        outputs: [{ type: "uint16" }],
+        stateMutability: "view",
+      },
+    ],
+    address: "0x0d36746783656989f8d7c03f6bfb80910d32f778",
+    functionName: "apyBps",
+  });
+  await insertInitialAPY(
+    context,
+    "InitCapital",
+    "0x0d36746783656989f8d7c03f6bfb80910d32f778",
+    "USDC",
+    Number(apyBps),
+    0n,
+    0n
+  );
+});
+
 const handleDeposit = async (
   event: any,
   context: any,
