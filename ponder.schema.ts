@@ -119,3 +119,20 @@ export const recentActivity = onchainTable(
     timestampIdx: index().on(table.timestamp),
   })
 );
+
+export const protocolAPY = onchainTable(
+  "protocol_apy",
+  (t) => ({
+    id: t.text().primaryKey(),
+    protocolName: t.text().notNull(),
+    protocolAddress: t.text().notNull(),
+    token: t.text().notNull(),
+    apyBps: t.integer().notNull(),
+    lastUpdatedBlock: t.bigint().notNull(),
+    lastUpdatedTimestamp: t.bigint().notNull(),
+  }),
+  (table) => ({
+    tokenIdx: index().on(table.token),
+    protocolIdx: index().on(table.protocolName),
+  })
+);

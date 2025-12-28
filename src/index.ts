@@ -7,6 +7,7 @@ import {
   rewards,
   harvestHistory,
   recentActivity,
+  protocolAPY,
 } from "ponder:schema";
 
 const vaultTokenMap: Record<string, string> = {
@@ -348,5 +349,220 @@ ponder.on("CoreUSDC:RewardDistributed", async ({ event, context }) => {
     event,
     context,
     "0x6da8058acf83d9ce89610e4c50bd6a35c7c9650b"
+  );
+});
+
+const protocolTokenMap: Record<string, { protocol: string; token: string }> = {
+  "0x89159c2a782ba2cae40ec25c39a1f38397f1eed5": {
+    protocol: "Beefy",
+    token: "cmETH",
+  },
+  "0x54ddde71d46409b919b8b29ad52133067b8441fb": {
+    protocol: "Beefy",
+    token: "mETH",
+  },
+  "0x5044c96dd29630fac0aa7a4ed8c03c0d0e28aa99": {
+    protocol: "Beefy",
+    token: "USDT",
+  },
+  "0xfa699fdc577f6b9538f6b979a327aed38ff27f57": {
+    protocol: "Beefy",
+    token: "USDC",
+  },
+
+  "0x91f048130c88c1f759a9bdc19883559d3dc275a6": {
+    protocol: "Compound",
+    token: "cmETH",
+  },
+  "0xd95d2f7c38bfa2f9d7a618474bc619470f01001f": {
+    protocol: "Compound",
+    token: "mETH",
+  },
+  "0x763a03a3328e475f75ee2dd0329b27f02eed2443": {
+    protocol: "Compound",
+    token: "USDT",
+  },
+  "0x4399b055b86c65bc2e91333d9118f98b974f052c": {
+    protocol: "Compound",
+    token: "USDC",
+  },
+
+  "0xf8c1cfd46a543efb13305b041fc573550207fa79": {
+    protocol: "Dolomite",
+    token: "cmETH",
+  },
+  "0xc3a0701cebea2b97c460fd147f2eb41d7a286417": {
+    protocol: "Dolomite",
+    token: "mETH",
+  },
+  "0x33efb6eb5bc283917cd212655685f7efbaab8d52": {
+    protocol: "Dolomite",
+    token: "USDT",
+  },
+  "0x9d583462ed3aada10ec86ac909d4db27f79866a7": {
+    protocol: "Dolomite",
+    token: "USDC",
+  },
+
+  "0x9a53dbaaccbbff2721168673ac7738422bd4d1e9": {
+    protocol: "InitCapital",
+    token: "cmETH",
+  },
+  "0x40199df02e052be29bbf289fbb7717cd0be8ee80": {
+    protocol: "InitCapital",
+    token: "mETH",
+  },
+  "0xe7ba244c2597ada3e6181577b9758c90f5802f13": {
+    protocol: "InitCapital",
+    token: "USDT",
+  },
+  "0x0d36746783656989f8d7c03f6bfb80910d32f778": {
+    protocol: "InitCapital",
+    token: "USDC",
+  },
+};
+
+const handleAPYUpdated = async (
+  event: any,
+  context: any,
+  protocolAddress: string
+) => {
+  const { newBps } = event.args;
+  const info = protocolTokenMap[protocolAddress.toLowerCase()];
+  if (!info) return;
+
+  const id = `${info.protocol.toLowerCase()}_${info.token.toLowerCase()}`;
+
+  await context.db
+    .insert(protocolAPY)
+    .values({
+      id,
+      protocolName: info.protocol,
+      protocolAddress: protocolAddress.toLowerCase(),
+      token: info.token,
+      apyBps: Number(newBps),
+      lastUpdatedBlock: event.block.number,
+      lastUpdatedTimestamp: event.block.timestamp,
+    })
+    .onConflictDoUpdate({
+      apyBps: Number(newBps),
+      lastUpdatedBlock: event.block.number,
+      lastUpdatedTimestamp: event.block.timestamp,
+    });
+};
+
+ponder.on("BeefyCmETH:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0x89159c2a782ba2cae40ec25c39a1f38397f1eed5"
+  );
+});
+ponder.on("BeefyMETH:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0x54ddde71d46409b919b8b29ad52133067b8441fb"
+  );
+});
+ponder.on("BeefyUSDT:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0x5044c96dd29630fac0aa7a4ed8c03c0d0e28aa99"
+  );
+});
+ponder.on("BeefyUSDC:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0xfa699fdc577f6b9538f6b979a327aed38ff27f57"
+  );
+});
+
+ponder.on("CompoundCmETH:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0x91f048130c88c1f759a9bdc19883559d3dc275a6"
+  );
+});
+ponder.on("CompoundMETH:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0xd95d2f7c38bfa2f9d7a618474bc619470f01001f"
+  );
+});
+ponder.on("CompoundUSDT:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0x763a03a3328e475f75ee2dd0329b27f02eed2443"
+  );
+});
+ponder.on("CompoundUSDC:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0x4399b055b86c65bc2e91333d9118f98b974f052c"
+  );
+});
+
+ponder.on("DolomiteCmETH:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0xf8c1cfd46a543efb13305b041fc573550207fa79"
+  );
+});
+ponder.on("DolomiteMETH:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0xc3a0701cebea2b97c460fd147f2eb41d7a286417"
+  );
+});
+ponder.on("DolomiteUSDT:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0x33efb6eb5bc283917cd212655685f7efbaab8d52"
+  );
+});
+ponder.on("DolomiteUSDC:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0x9d583462ed3aada10ec86ac909d4db27f79866a7"
+  );
+});
+
+ponder.on("InitCapitalCmETH:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0x9a53dbaaccbbff2721168673ac7738422bd4d1e9"
+  );
+});
+ponder.on("InitCapitalMETH:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0x40199df02e052be29bbf289fbb7717cd0be8ee80"
+  );
+});
+ponder.on("InitCapitalUSDT:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0xe7ba244c2597ada3e6181577b9758c90f5802f13"
+  );
+});
+ponder.on("InitCapitalUSDC:APYUpdated", async ({ event, context }) => {
+  await handleAPYUpdated(
+    event,
+    context,
+    "0x0d36746783656989f8d7c03f6bfb80910d32f778"
   );
 });
